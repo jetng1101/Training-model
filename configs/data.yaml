@@ -1,0 +1,21 @@
+dataset:
+  name: "uoft-cs/cifar100"
+  label_column: "fine_label"
+  num_classes: 100
+  image_column: "img"
+
+loader:
+  batch_size: 128
+  num_workers: 4
+  pin_memory: true
+
+augmentation:
+  image_size: 32
+  train:
+    random_horizontal_flip_probability: 0.5
+    random_crop_padding: 4
+    normalize_mean: [0.5071, 0.4867, 0.4408]
+    normalize_std: [0.2675, 0.2565, 0.2761]
+  val:
+    normalize_mean: [0.5071, 0.4867, 0.4408]
+    normalize_std: [0.2675, 0.2565, 0.2761]

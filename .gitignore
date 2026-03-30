@@ -1,0 +1,41 @@
+# Environment
+.env
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Checkpoints & outputs
+outputs/
+checkpoints/
+*.ckpt
+*.pth
+*.pt
+
+# Hydra outputs
+outputs/
+multirun/
+.hydra/
+
+# W&B
+wandb/
+
+# Data (không commit data lên git)
+data/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
