@@ -1,3 +1,3 @@
-from src.training.trainer import Trainer
+from .trainer import Trainer
 
 __all__ = ["Trainer"]
