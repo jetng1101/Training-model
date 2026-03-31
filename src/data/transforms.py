@@ -12,11 +12,12 @@ def build_train_transforms(augmentation_config: DictConfig) -> A.Compose:
     cj = train_cfg.color_jitter
     cd = train_cfg.coarse_dropout
 
+    target_size = (image_size, image_size)
+
     return A.Compose([
         A.Resize(height=image_size, width=image_size),
         A.RandomResizedCrop(
-            height=image_size,
-            width=image_size,
+            size=target_size,
             scale=(rrc.scale_min, rrc.scale_max),
             ratio=(rrc.ratio_min, rrc.ratio_max),
         ),
