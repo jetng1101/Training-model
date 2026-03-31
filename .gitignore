@@ -25,7 +25,7 @@ multirun/
 wandb/
 
 # Data (không commit data lên git)
-data/
+/data/
 
 # Jupyter
 .ipynb_checkpoints/
