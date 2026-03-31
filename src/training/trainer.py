@@ -29,7 +29,7 @@ class Trainer:
         self._config = config
         self._logger = logger
         self._device = torch.device(config.device if torch.cuda.is_available() else "cpu")
-        self._criterion = build_criterion()
+        self._criterion = build_criterion(config.loss)
         self._optimizer = self._build_optimizer()
         self._scheduler = self._build_scheduler()
         self._checkpoint_manager = CheckpointManager(config.trainer.checkpoint_dir)

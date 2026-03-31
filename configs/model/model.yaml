@@ -1,9 +1,9 @@
 backbone:
   name: "resnet50"
   pretrained: true
-  drop_rate: 0.0
+  drop_rate: 0.2
 
 head:
   hidden_dim: 512
-  dropout_rate: 0.3
+  dropout_rate: 0.5
   num_classes: 100

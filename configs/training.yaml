@@ -11,10 +11,13 @@ trainer:
   log_interval: 50
   checkpoint_dir: "checkpoints"
 
+loss:
+  label_smoothing: 0.1
+
 optimizer:
   name: "adamw"
   learning_rate: 1.0e-3
-  weight_decay: 1.0e-4
+  weight_decay: 5.0e-4
 
 scheduler:
   name: "cosine"
