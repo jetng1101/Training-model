@@ -2,6 +2,7 @@ backbone:
   name: "resnet50"
   pretrained: true
   drop_rate: 0.2
+  adapt_for_cifar: true
 
 head:
   hidden_dim: 512

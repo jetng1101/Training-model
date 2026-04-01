@@ -8,19 +8,17 @@ def build_train_transforms(augmentation_config: DictConfig) -> A.Compose:
     cfg = augmentation_config
     train_cfg = cfg.train
     image_size = cfg.image_size
-    rrc = train_cfg.random_resized_crop
     cj = train_cfg.color_jitter
     cd = train_cfg.coarse_dropout
 
-    target_size = (image_size, image_size)
-
     return A.Compose([
-        A.Resize(height=image_size, width=image_size),
-        A.RandomResizedCrop(
-            size=target_size,
-            scale=(rrc.scale_min, rrc.scale_max),
-            ratio=(rrc.ratio_min, rrc.ratio_max),
+        A.PadIfNeeded(
+            min_height=image_size + train_cfg.random_crop_padding * 2,
+            min_width=image_size + train_cfg.random_crop_padding * 2,
+            border_mode=0,
+            value=0,
         ),
+        A.RandomCrop(height=image_size, width=image_size),
         A.HorizontalFlip(p=train_cfg.random_horizontal_flip_probability),
         A.ColorJitter(
             brightness=cj.brightness,
@@ -46,11 +44,9 @@ def build_train_transforms(augmentation_config: DictConfig) -> A.Compose:
 
 def build_val_transforms(augmentation_config: DictConfig) -> A.Compose:
     """Build augmentation pipeline for validation/test split."""
-    image_size = augmentation_config.image_size
     val_cfg = augmentation_config.val
 
     return A.Compose([
-        A.Resize(height=image_size, width=image_size),
         A.Normalize(mean=val_cfg.normalize_mean, std=val_cfg.normalize_std),
         ToTensorV2(),
     ])
