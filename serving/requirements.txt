@@ -1,0 +1,15 @@
+# API framework
+fastapi
+uvicorn[standard]
+pydantic-settings
+python-multipart
+
+# ML inference (same as training)
+torch
+torchvision
+timm
+albumentations
+opencv-python-headless
+Pillow
+numpy
+omegaconf
