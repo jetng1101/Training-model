@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 from omegaconf import DictConfig
-from torch.cuda.amp import GradScaler, autocast
 from torch.optim import AdamW, Optimizer
 from torch.optim.lr_scheduler import CosineAnnealingLR, LRScheduler
 from torch.utils.data import DataLoader
@@ -33,7 +32,8 @@ class Trainer:
         self._criterion = build_criterion(config.loss)
         self._optimizer = self._build_optimizer()
         self._scheduler = self._build_scheduler()
-        self._scaler = GradScaler(enabled=self._device.type == "cuda")
+        self._use_amp = self._device.type == "cuda"
+        self._scaler = torch.amp.GradScaler("cuda", enabled=self._use_amp)
         self._checkpoint_manager = CheckpointManager(config.trainer.checkpoint_dir)
         self._model.to(self._device)
 
@@ -67,13 +67,12 @@ class Trainer:
         total_top1 = 0.0
         total_top5 = 0.0
         log_interval = self._config.trainer.log_interval
-        is_cuda = self._device.type == "cuda"
         progress = tqdm(self._train_loader, desc=f"Epoch {epoch} [Train]", leave=False)
         for step, (images, labels) in enumerate(progress):
             images = images.to(self._device)
             labels = labels.to(self._device)
             self._optimizer.zero_grad()
-            with autocast(device_type="cuda", enabled=is_cuda):
+            with torch.amp.autocast("cuda", enabled=self._use_amp):
                 logits = self._model(images)
                 loss = self._criterion(logits, labels)
             self._scaler.scale(loss).backward()
@@ -99,12 +98,11 @@ class Trainer:
         total_loss = 0.0
         total_top1 = 0.0
         total_top5 = 0.0
-        is_cuda = self._device.type == "cuda"
         progress = tqdm(self._val_loader, desc="Epoch [Val]", leave=False)
         for images, labels in progress:
             images = images.to(self._device)
             labels = labels.to(self._device)
-            with autocast(device_type="cuda", enabled=is_cuda):
+            with torch.amp.autocast("cuda", enabled=self._use_amp):
                 logits = self._model(images)
                 loss = self._criterion(logits, labels)
             accuracy = compute_topk_accuracy(logits.float(), labels, top_k=(1, 5))

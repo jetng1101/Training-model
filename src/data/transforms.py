@@ -10,13 +10,14 @@ def build_train_transforms(augmentation_config: DictConfig) -> A.Compose:
     image_size = cfg.image_size
     cj = train_cfg.color_jitter
     cd = train_cfg.coarse_dropout
+    padded_size = image_size + train_cfg.random_crop_padding * 2
 
     return A.Compose([
         A.PadIfNeeded(
-            min_height=image_size + train_cfg.random_crop_padding * 2,
-            min_width=image_size + train_cfg.random_crop_padding * 2,
+            min_height=padded_size,
+            min_width=padded_size,
             border_mode=0,
-            value=0,
+            fill=0,
         ),
         A.RandomCrop(height=image_size, width=image_size),
         A.HorizontalFlip(p=train_cfg.random_horizontal_flip_probability),
@@ -28,13 +29,10 @@ def build_train_transforms(augmentation_config: DictConfig) -> A.Compose:
             p=cj.probability,
         ),
         A.CoarseDropout(
-            max_holes=cd.max_holes,
-            max_height=cd.max_height,
-            max_width=cd.max_width,
-            min_holes=cd.min_holes,
-            min_height=cd.min_height,
-            min_width=cd.min_width,
-            fill_value=cd.fill_value,
+            num_holes_range=tuple(cd.num_holes_range),
+            hole_height_range=tuple(cd.hole_height_range),
+            hole_width_range=tuple(cd.hole_width_range),
+            fill=cd.fill,
             p=cd.probability,
         ),
         A.Normalize(mean=train_cfg.normalize_mean, std=train_cfg.normalize_std),
